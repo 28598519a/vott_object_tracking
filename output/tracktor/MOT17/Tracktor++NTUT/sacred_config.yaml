@@ -1,0 +1,112 @@
+!!python/object/new:sacred.config.custom_containers.ReadOnlyDict
+dictitems:
+  reid: !!python/object/new:sacred.config.custom_containers.ReadOnlyDict
+    dictitems:
+      cnn: !!python/object/new:sacred.config.custom_containers.ReadOnlyDict
+        dictitems:
+          output_dim: 128
+        state:
+          message: The configuration is read-only in a captured function!
+      dataloader: !!python/object/new:sacred.config.custom_containers.ReadOnlyDict
+        dictitems:
+          K: 4
+          P: 18
+          crop_H: 256
+          crop_W: 128
+          max_per_person: 1000
+          normalize_mean: !!python/object/new:sacred.config.custom_containers.ReadOnlyList
+            listitems:
+            - 0.485
+            - 0.456
+            - 0.406
+            state:
+              message: The configuration is read-only in a captured function!
+          normalize_std: !!python/object/new:sacred.config.custom_containers.ReadOnlyList
+            listitems:
+            - 0.229
+            - 0.224
+            - 0.225
+            state:
+              message: The configuration is read-only in a captured function!
+          transform: random
+          vis_threshold: 0.3
+        state:
+          message: The configuration is read-only in a captured function!
+      db_train: train
+      db_val: false
+      desription: all
+      lr_scheduler: true
+      max_epochs: 69
+      model_args: !!python/object/new:sacred.config.custom_containers.ReadOnlyDict
+        dictitems:
+          loss: batch_hard
+          margin: 0.2
+          prec_at_k: 3
+        state:
+          message: The configuration is read-only in a captured function!
+      module_name: reid
+      name: res50-mot17-batch_hard
+      seed: 12345
+      solver: !!python/object/new:sacred.config.custom_containers.ReadOnlyDict
+        dictitems:
+          optim: Adam
+          optim_args: !!python/object/new:sacred.config.custom_containers.ReadOnlyDict
+            dictitems:
+              lr: 0.0003
+              weight_decay: 0.0
+            state:
+              message: The configuration is read-only in a captured function!
+        state:
+          message: The configuration is read-only in a captured function!
+    state:
+      message: The configuration is read-only in a captured function!
+  seed: 453695
+  tracktor: !!python/object/new:sacred.config.custom_containers.ReadOnlyDict
+    dictitems:
+      dataset: NTUT
+      desription: null
+      frame_split: !!python/object/new:sacred.config.custom_containers.ReadOnlyList
+        listitems:
+        - 0.0
+        - 1.0
+        state:
+          message: The configuration is read-only in a captured function!
+      interpolate: false
+      module_name: MOT17
+      name: Tracktor++NTUT
+      network: fpn
+      obj_detect_model: output/faster_rcnn_fpn_training_mot_17/model_epoch_27.model
+      reid_config: output/tracktor/reid/res50-mot17-batch_hard/sacred_config.yaml
+      reid_weights: output/tracktor/reid/res50-mot17-batch_hard/ResNet_iter_25245.pth
+      seed: 12345
+      tracker: !!python/object/new:sacred.config.custom_containers.ReadOnlyDict
+        dictitems:
+          detection_nms_thresh: 0.3
+          detection_person_thresh: 0.5
+          do_align: false
+          do_reid: true
+          inactive_patience: 10
+          max_features_num: 10
+          motion_model: !!python/object/new:sacred.config.custom_containers.ReadOnlyDict
+            dictitems:
+              center_only: true
+              enabled: false
+              n_steps: 1
+            state:
+              message: The configuration is read-only in a captured function!
+          number_of_iterations: 100
+          public_detections: false
+          regression_nms_thresh: 0.6
+          regression_person_thresh: 0.5
+          reid_iou_threshold: 0.2
+          reid_sim_threshold: 2.0
+          termination_eps: 0.001
+          warp_mode: cv2.MOTION_EUCLIDEAN
+        state:
+          message: The configuration is read-only in a captured function!
+      write_images: false
+      write_videos: false
+    state:
+      message: The configuration is read-only in a captured function!
+state:
+  message: The configuration is read-only in a captured function!

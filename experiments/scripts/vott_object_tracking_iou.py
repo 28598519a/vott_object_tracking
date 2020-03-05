@@ -1,7 +1,7 @@
 import cv2
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.join(sys.path[0], "..", ".." ), "src")))
+sys.path.append(os.path.abspath(os.path.join(sys.path[0], "..", "..", "src")))
 
 from libvott import Target
 

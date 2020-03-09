@@ -5,8 +5,9 @@ sys.path.append(os.path.join(sys.path[0], "..", "..", "src"))
 
 from libvott import Target
 
-Backward = 5
 Distance = 250
+Preserve_gap = 2.0
+Backward = 5
 Increase_dist = 40
 Tracking = True
 Debug = False
@@ -74,7 +75,7 @@ def main():
 			ymax = round(float(boxes_i[count][3]))
 			
 			k = i + 1
-			if Tracking is True and (float(timelist[k]) - float(timelist[i])) < 0.2:
+			if Tracking is True and (float(timelist[k]) - float(timelist[i])) < Preserve_gap:
 				boxes_k = [bb for bb in bbdict[timelist[k]]]
 				
 				listIOU = [compute_iou((xmin, ymin, xmax, ymax), (round(float(boxes_k[j][0])), round(float(boxes_k[j][1])), round(float(boxes_k[j][2])),round(float(boxes_k[j][3])))) for j in range(len(boxes_k))]
@@ -98,7 +99,7 @@ def main():
 								if min(listp2p) >= Distance:
 									index = None
 									if search != (Backward - 1):
-										if k < (len(timelist) - 1) and (float(timelist[k+1]) - float(timelist[k])) < 0.2:
+										if k < (len(timelist) - 1) and (float(timelist[k+1]) - float(timelist[k])) < Preserve_gap:
 											Distance += Increase_dist
 											k += 1
 											boxes_k = [bb for bb in bbdict[timelist[k]]]

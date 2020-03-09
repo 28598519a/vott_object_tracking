@@ -3,8 +3,6 @@ import json
 import os
 import re
 
-from functools import cmp_to_key
-
 class Target:
 	targetpath = None
 	targetname = None
@@ -244,10 +242,7 @@ class Target:
 		if not os.path.exists(imgdir):
 			os.mkdir(imgdir)
 
-		def cmp(a, b):
-			return (float(a) > float(b)) - (float(a) < float(b))
-
-		timelist.sort(key = cmp_to_key(lambda x,y: cmp(float(x), float(y))))
+		timelist.sort(timelist, key = lambda x: float(x))
 		#print(timelist)
 		filedict = {}
 		listcount = len(timelist)

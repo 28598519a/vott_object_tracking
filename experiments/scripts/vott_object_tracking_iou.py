@@ -5,8 +5,9 @@ sys.path.append(os.path.join(sys.path[0], "..", "..", "src"))
 
 from libvott import Target
 
-Backward = 1
-Distance = 200
+Backward = 5
+Distance = 250
+Increase_dist = 40
 Tracking = True
 Debug = False
 
@@ -36,7 +37,7 @@ def compute_iou(rec1, rec2):
 		return (intersect / (sum_area - intersect)) * 1
 
 def main():
-	global Tracking
+	global Tracking, Distance
 	i = 0
 	track = 0
 	id = {}
@@ -85,6 +86,7 @@ def main():
 
 				# Distnace point-to-point
 				if max(listIOU) == 0:
+					dist = Distance
 					for search in range(Backward):
 						listp2p = [((xmin - round(float(boxes_k[j][0])))**2 + (ymin - round(float(boxes_k[j][1])))**2)**0.5 for j in range(len(boxes_k))]
 						if min(listp2p) < Distance:
@@ -97,8 +99,10 @@ def main():
 									index = None
 									if search != (Backward - 1):
 										if k < (len(timelist) - 1) and (float(timelist[k+1]) - float(timelist[k])) < 0.2:
+											Distance += Increase_dist
 											k += 1
 											boxes_k = [bb for bb in bbdict[timelist[k]]]
+									Distance = dist
 									break
 						else:
 							index = None

@@ -14,8 +14,8 @@ Please create two folders first
 | Hardware requirements | CPU + GPU ( VRAM > 3 GB )                         | CPU                            |
 | Speed                 | Slow                                              | Very fast                      |
 | Required files        | Video (.mp4)<br>Target (.vott、.json)             | Target (.vott、.json)          |
-| Parameter preset      | reid_sim_threshold : 1.1<br>reid_iou_threshold : 0| Distance : 250<br>Preserve_gap : 2.0<Br>Backward : 5<br>Increase_dist : 40 |
-| Note                  | Where applicable, the effect may be Better than vott_object_tracking_iou | If most objects in the frames are very large Intensive, please give priority to use ott_object_tracking_fpn |
+| Parameter preset      | reid_sim_threshold : 1.1<br>reid_iou_threshold : 0| Distance : 250<br>Preserve_gap : 2.0<Br>Backward : 5<br>Increase_dist : 20 |
+| Note                  | Where applicable, the effect may be Better than vott_object_tracking_iou |  |
 <br>
 If there is no specific reason, simply select vott_object_tracking_iou
 

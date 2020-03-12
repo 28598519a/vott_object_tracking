@@ -6,7 +6,7 @@ from libvott import Target
 
 Distance = 250
 Preserve_gap = 2.0
-Backward = 5
+Backward = 3
 Increase_dist = 20
 Tracking = True
 Debug = False
@@ -36,7 +36,7 @@ def compute_iou(rec1, rec2):
 		intersect = (right_line - left_line) * (bottom_line - top_line)
 		return (intersect / (sum_area - intersect)) * 1
 
-def relate_match(boxes_i, boxes_k, match, st_point):
+def relate_match(boxes_i, boxes_k, match, st_point, Debug = False):
 	offset = abs(len(boxes_i) - len(boxes_k))
 
 	# calculate relative position of frame i
@@ -71,7 +71,11 @@ def relate_match(boxes_i, boxes_k, match, st_point):
 					else:
 						RUk += 1
 
+		# score is probably even
 		score.append(abs(abs(LUi-LUk) + abs(RUi-RUk) + abs(LDi-LDk) + abs(RDi-RDk) - offset))
+
+	if Debug is True:
+		print("Relate score index and min :", score.index(min(score)), min(score))
 
 	return match[score.index(min(score))]
 
@@ -98,6 +102,10 @@ def main():
 			Tracking = False
 		boxes_i = [bb for bb in bbdict[timelist[i]]]
 
+		if Debug is True:
+			print()
+			print(f"Time : {timelist[i]}")
+
 		# Draw all the boxes that this frame contains
 		count = 0
 		while i != len(timelist) and count != len(boxes_i):
@@ -120,11 +128,15 @@ def main():
 
 				while True:
 					matchIOU = [x for x in listIOU if x != 0]
+
+					if Debug is True and len(matchIOU) > 1:
+						print(f"Match IOU : {matchIOU}")
+
 					if len(matchIOU) <= 1:
 						index = listIOU.index(max(listIOU))
 					else:
 						matchIOU = [listIOU.index(x) for x in matchIOU]
-						index = relate_match(boxes_i, boxes_k, matchIOU, count)
+						index = relate_match(boxes_i, boxes_k, matchIOU, count, Debug=Debug)
 
 					if not (k in id.keys() and index in id[k].keys() and max(listIOU) != 0):
 						break
@@ -132,29 +144,28 @@ def main():
 						listIOU[index] = 0
 
 				# Distnace point-to-point
-				if max(listIOU) == 0:
+				if max(listIOU) is 0:
 					dist = Distance
 					keep_break = 0
 
 					for search in range(Backward):
-						if keep_break == 1:
+						if keep_break is 1:
 							break
 
 						listp2p = [((xmin - round(float(boxes_k[j][0])))**2 + (ymin - round(float(boxes_k[j][1])))**2)**0.5 for j in range(len(boxes_k))]
 						while True:
 							matchp2p = [listp2p.index(x) for x in listp2p if x < Distance]
-							if len(matchp2p) > 1:
-								index = relate_match(boxes_i, boxes_k, matchp2p, count)
-							elif len(matchp2p) ==  1:
+							if len(matchp2p) > 1 and search is 0:
+								index = relate_match(boxes_i, boxes_k, matchp2p, count, Debug=Debug)
+							elif len(matchp2p) is 1 or (search != 0 and len(matchp2p) > 0):
 								index = listp2p.index(min(listp2p))
 							else:
 								index = None
-								if search != (Backward - 1):
-									if (k + 1) < len(timelist) and (float(timelist[k+1]) - float(timelist[k])) < Preserve_gap:
-										Distance += Increase_dist
-										k += 1
-										boxes_k = [bb for bb in bbdict[timelist[k]]]
-								break
+								if search != (Backward - 1) and (k + 1) < len(timelist) and (float(timelist[k+1]) - float(timelist[k])) < Preserve_gap:
+									Distance += Increase_dist
+									k += 1
+									boxes_k = [bb for bb in bbdict[timelist[k]]]
+									break
 
 							if not (k in id.keys() and index in id[k].keys()):
 								keep_break = 1
@@ -175,13 +186,14 @@ def main():
 
 		if Debug is True:
 			print(id[i])
-			input()
+		else:
+			target.WriteID2asset(id[i], dictid[timelist[i]])
 
-		target.WriteID2asset(id[i], dictid[timelist[i]])
 		i += 1
 
-	ids = [j for j in range(track)]
-	target.WriteID2vott(ids, vottfile=vottfile)
+	if Debug is False:
+		ids = [j for j in range(track)]
+		target.WriteID2vott(ids, vottfile=vottfile)
 
 	print(f"Tracks found: {track}")
 	print("Done")

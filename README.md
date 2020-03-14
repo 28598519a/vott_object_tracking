@@ -14,7 +14,7 @@ Please create two folders first
 | Hardware requirements | CPU                                | CPU + GPU ( VRAM > 3 GB )                         |
 | Speed                 | Very fast                          | Slow                                              |
 | Required files        | Target (.vott、.json)              | Video (.mp4)<br>Target (.vott、.json)             |
-| Parameter preset      | Distance : 250<br>Preserve_gap : 2.0<Br>Backward : 5<br>Increase_dist : 20 | reid_sim_threshold : 1.1<br>reid_iou_threshold : 0|
+| Parameter preset      | Distance : 250<br>Preserve_gap : 2.0<Br>Backward : 3<br>Increase_dist : 20 | reid_sim_threshold : 2.0<br>reid_iou_threshold : 0.01|
 | Note                  | If there is no specific reason, simply select vott_object_tracking_iou | Where applicable, the effect may be Better than vott_object_tracking_iou |
 
 ## Usage
@@ -27,7 +27,7 @@ Run
 `python experiments/scripts/vott_object_tracking_fpn.py`  
 ### vott_object_tracking_iou  
 Set Parameter  
-Edit experiments\scripts\vott_object_tracking_fpn.py  
+Edit experiments\scripts\vott_object_tracking_iou.py  
 `Distance`  
 `Backward`  
 Run  

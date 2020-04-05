@@ -106,7 +106,7 @@ def main():
 			print()
 			print(f"Time : {timelist[i]}")
 
-		# Draw all the boxes that this frame contains
+		# All the boxes that this frame contains
 		count = 0
 		while i != len(timelist) and count != len(boxes_i):
 			if i not in id.keys() or count not in id[i].keys():

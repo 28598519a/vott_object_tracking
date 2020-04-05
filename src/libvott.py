@@ -1,4 +1,3 @@
-import cv2
 import json
 import os
 import re
@@ -12,7 +11,7 @@ class Target:
 
 	def Folder(self):
 		while True:
-			Target.targetpath = input('Please write your target folder path( /home/.../Drone_XXX ) : ').replace("'","").replace("/","\\")
+			Target.targetpath = input('Please write your target folder path( /home/.../Drone_XXX ) : ').replace("'","")
 			if os.path.exists(Target.targetpath):
 				break
 			else:
@@ -229,6 +228,9 @@ class Target:
 		file.close()
 
 	def ExtractByTimeList(self, timelist, video = None, extract = True):
+		# require opencv-python
+		import cv2
+		
 		if video is None:
 			video = os.path.join(Target.videodir, Target.targetname + ".mp4")
 			targetname = Target.targetname
@@ -242,7 +244,7 @@ class Target:
 		if not os.path.exists(imgdir):
 			os.mkdir(imgdir)
 
-		timelist.sort(timelist, key = lambda x: float(x))
+		timelist = sorted(timelist, key = lambda x: float(x))
 		#print(timelist)
 		filedict = {}
 		listcount = len(timelist)
@@ -261,17 +263,16 @@ class Target:
 					break
 
 				while timestamp >= timelist[count]:
-					if (timestamp - timelist[count]) < 0.034:
-						if timelist[count].is_integer():
-							now = int(timelist[count])
-						else:
-							now = timelist[count]
-						filedict["%06d" % count] = now
-						n = os.path.join(imgdir, "%06d.jpg" % count)
-						cv2.imwrite(n, frame)	  # save frame as JPEG file
-						count += 1
-						print(f"\r{count} / {listcount}", end="")
-						break
+					if timelist[count].is_integer():
+						now = int(timelist[count])
+					else:
+						now = timelist[count]
+					filedict["%06d" % count] = now
+					n = os.path.join(imgdir, "%06d.jpg" % count)
+					cv2.imwrite(n, frame)	  # save frame as JPEG file
+					count += 1
+					print(f"\r{count} / {listcount}", end="")
+					break
 
 			video_capture.release()
 		else:

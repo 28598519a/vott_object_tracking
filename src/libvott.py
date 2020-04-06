@@ -3,37 +3,38 @@ import os
 import re
 
 class Target:
-	targetpath = None
-	targetname = None
-	vottpath = None
-	videodir = "Video"
-	imagedir = "Image"
+	def __init__(self, videodir = "Video", imagedir = "Image"):
+		self.targetpath = None
+		self.targetname = None
+		self.vottpath = None
+		self.videodir = videodir
+		self.imagedir = imagedir
 
 	def Folder(self):
 		while True:
-			Target.targetpath = input('Please write your target folder path( /home/.../Drone_XXX ) : ').replace("'","")
-			if os.path.exists(Target.targetpath):
+			self.targetpath = input('Please write your target folder path( /home/.../Drone_XXX ) : ').replace("'","")
+			if os.path.exists(self.targetpath):
 				break
 			else:
 				print("Target Path not exist")
 
-		if not os.path.basename(Target.targetpath):
-			Target.targetpath = Target.targetpath[:-1]
+		if not os.path.basename(self.targetpath):
+			self.targetpath = self.targetpath[:-1]
 
-		return Target.targetpath
+		return self.targetpath
 
 	def TargetName(self, target = None):
 		if target is None:
-			target = Target.targetpath
-		Target.targetname = os.path.basename(target)
+			target = self.targetpath
+		self.targetname = os.path.basename(target)
 
-		return Target.targetname
+		return self.targetname
 
 	def Getcsv(self, target = None, targetname = None):
 		if target is None:
-			target = Target.targetpath
+			target = self.targetpath
 		if targetname is None:
-			targetname = Target.targetname
+			targetname = self.targetname
 
 		csvpath = os.path.join(target, "vott-csv-export", f"{targetname}-export.csv")
 		if not os.path.exists(csvpath):
@@ -74,23 +75,23 @@ class Target:
 
 	def GetVottPath(self, target = None, targetname = None):
 		if target is None:
-			target = Target.targetpath
+			target = self.targetpath
 		if targetname is None:
-			targetname = Target.targetname
+			targetname = self.targetname
 
-		Target.vottpath = os.path.join(target, f"{targetname}.vott")
-		if not os.path.exists(Target.vottpath):
+		self.vottpath = os.path.join(target, f"{targetname}.vott")
+		if not os.path.exists(self.vottpath):
 			for file in os.listdir(target):
 				if file.endswith(".vott"):
-					Target.vottpath = os.path.join(target, file)
+					self.vottpath = os.path.join(target, file)
 				else:
 					raise OSError(f"{vottpath} not exist")
 
-		return Target.vottpath
+		return self.vottpath
 
 	def GetVottContent(self, vottpath = None):
 		if vottpath is None:
-			vottpath = Target.vottpath
+			vottpath = self.vottpath
 
 		if not os.path.exists(vottpath):
 			raise OSError(f"{vottpath} not exist")
@@ -121,7 +122,7 @@ class Target:
 
 	def GetbbWithTime(self, vottfile, target = None):
 		if target is None:
-			target = Target.targetpath
+			target = self.targetpath
 
 		source = re.search(r'file:(.*?)#', vottfile).group(1)
 
@@ -162,7 +163,7 @@ class Target:
 
 	def WriteID2asset(self, id, assetid, target = None):
 		if target is None:
-			target = Target.targetpath
+			target = self.targetpath
 
 		assetpath = os.path.join(target, assetid + "-asset.json")
 		if os.path.exists(assetpath):
@@ -182,7 +183,7 @@ class Target:
 
 	def WriteID2vott(self, ids, vottpath = None, vottfile = None):
 		if vottpath is None:
-			vottpath = Target.vottpath
+			vottpath = self.vottpath
 		if vottfile is None:
 			file = open(vottpath, "r")
 			vottfile = file.read()
@@ -206,7 +207,7 @@ class Target:
 
 	def DelVottVisitMark(self, vottpath = None, vottfile = None):
 		if vottpath is None:
-			vottpath = Target.vottpath
+			vottpath = self.vottpath
 		if vottfile is None:
 			file = open(vottpath, "r")
 			vottfile = file.read()
@@ -230,17 +231,17 @@ class Target:
 	def ExtractByTimeList(self, timelist, video = None, extract = True):
 		# require opencv-python
 		import cv2
-		
+
 		if video is None:
-			video = os.path.join(Target.videodir, Target.targetname + ".mp4")
-			targetname = Target.targetname
+			video = os.path.join(self.videodir, self.targetname + ".mp4")
+			targetname = self.targetname
 		else:
-			targetname = os.path.splitext(video)[0]
+			targetname = os.path.splitext(os.path.basename(video))[0]
 
 		if not os.path.exists(video):
 			raise OSError(f"{video} not exist")
 
-		imgdir = os.path.join(Target.imagedir, targetname)
+		imgdir = os.path.join(self.imagedir, targetname)
 		if not os.path.exists(imgdir):
 			os.mkdir(imgdir)
 
@@ -258,11 +259,17 @@ class Target:
 				ret,frame = video_capture.read()
 				timestamp = (video_capture.get(cv2.CAP_PROP_POS_MSEC))/1000
 
-				if (ret == False and type(frame) is type(None)) or count == listcount:
-					print("\nImage extract finish")
-					break
+				if (ret is False) or (count is listcount):
+					if count is listcount:
+						print("\nImage extract finish")
+						break
+					elif (listcount - count) is 1:
+						timestamp = timelist[count]
+						frame = safety_frame
+					else:
+						raise RuntimeError("Unable to extract enough images")
 
-				while timestamp >= timelist[count]:
+				if timestamp >= timelist[count]:
 					if timelist[count].is_integer():
 						now = int(timelist[count])
 					else:
@@ -272,7 +279,10 @@ class Target:
 					cv2.imwrite(n, frame)	  # save frame as JPEG file
 					count += 1
 					print(f"\r{count} / {listcount}", end="")
-					break
+
+				# Make sure that the last frame will be output
+				if (listcount - count) is 1:
+					safety_frame = frame
 
 			video_capture.release()
 		else:
@@ -283,9 +293,9 @@ class Target:
 
 	def CleanImg(self):
 		# Return a normalized absolutized version of the pathname path, but does not represent existence.
-		imgdir = os.path.abspath(Target.imagedir)
+		imgdir = os.path.abspath(self.imagedir)
 		if os.path.exists(imgdir):
-			yn = input(f"Clean cache in {imgdir} ? (y/n)：")
+			yn = input(f"Clean cache in {imgdir} ? (y/n) : ")
 			if yn == 'y':
 				for root, dirs, files in os.walk(imgdir, topdown=False):
 					for name in files:

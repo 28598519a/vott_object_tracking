@@ -100,7 +100,7 @@ def main():
 	while i != len(timelist):
 		if i + 2 > len(timelist):
 			Tracking = False
-		boxes_i = [bb for bb in bbdict[timelist[i]]]
+		boxes_i = bbdict[timelist[i]]
 
 		if Debug is True:
 			print()
@@ -122,7 +122,7 @@ def main():
 
 			k = i + 1
 			if Tracking is True and (float(timelist[k]) - float(timelist[i])) < Preserve_gap:
-				boxes_k = [bb for bb in bbdict[timelist[k]]]
+				boxes_k = bbdict[timelist[k]]
 
 				listIOU = [compute_iou((xmin, ymin, xmax, ymax), (round(float(boxes_k[j][0])), round(float(boxes_k[j][1])), round(float(boxes_k[j][2])),round(float(boxes_k[j][3])))) for j in range(len(boxes_k))]
 
@@ -164,7 +164,7 @@ def main():
 								if search != (Backward - 1) and (k + 1) < len(timelist) and (float(timelist[k+1]) - float(timelist[k])) < Preserve_gap:
 									Distance += Increase_dist
 									k += 1
-									boxes_k = [bb for bb in bbdict[timelist[k]]]
+									boxes_k = bbdict[timelist[k]]
 									break
 
 							if not (k in id.keys() and index in id[k].keys()):

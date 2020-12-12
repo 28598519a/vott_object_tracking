@@ -6,6 +6,8 @@ Please create two folders first
     `Image`  
     `Video`
 
+If you need to use vott_object_tracking_fpn, please check the [vott_object_tracking使用說明.pdf](vott_object_tracking%E4%BD%BF%E7%94%A8%E8%AA%AA%E6%98%8E.pdf)
+
 ## Description
 | program               | vott_object_tracking_iou           | vott_object_tracking_fpn                          |
 | :--------------------:|------------------------------------|---------------------------------------------------|
